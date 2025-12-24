@@ -1,5 +1,9 @@
 #include <gtest/gtest.h>
 
+#include <algorithm>
+#include <cstddef>
+#include <vector>
+
 #include "timur_a_image/common/include/common.hpp"
 #include "timur_a_image/mpi/include/ops_mpi.hpp"
 #include "timur_a_image/seq/include/ops_seq.hpp"
@@ -7,16 +11,29 @@
 
 namespace timur_a_image {
 
-class ExampleRunPerfTestProcesses2 : public ppc::util::BaseRunPerfTests<InType, OutType> {
-  const int kCount_ = 100;
-  InType input_data_{};
+class TimurAImagePerfTest : public ppc::util::BaseRunPerfTests<InType, OutType> {
+  const int kWidth_ = 3840;
+  const int kHeight_ = 3840;
+  const int kKernelSize_ = 5;
+
+  InType input_data_;
 
   void SetUp() override {
-    input_data_ = kCount_;
+    input_data_.width = kWidth_;
+    input_data_.height = kHeight_;
+    input_data_.kernel_size = kKernelSize_;
+    input_data_.data.resize(static_cast<size_t>(kWidth_) * static_cast<size_t>(kHeight_));
+
+    std::ranges::fill(input_data_.data, 100);
   }
 
   bool CheckTestOutputData(OutType &output_data) final {
-    return input_data_ == output_data;
+    if (output_data.data.empty()) {
+      return true;
+    }
+
+    return output_data.width == kWidth_ && output_data.height == kHeight_ &&
+           output_data.data.size() == static_cast<size_t>(kWidth_) * static_cast<size_t>(kHeight_);
   }
 
   InType GetTestInputData() final {
@@ -24,17 +41,17 @@ class ExampleRunPerfTestProcesses2 : public ppc::util::BaseRunPerfTests<InType, 
   }
 };
 
-TEST_P(ExampleRunPerfTestProcesses2, RunPerfModes) {
+TEST_P(TimurAImagePerfTest, RunPerfModes) {
   ExecuteTest(GetParam());
 }
 
-const auto kAllPerfTasks =
-    ppc::util::MakeAllPerfTasks<InType, TimurAImageMPI, TimurAImageSEQ>(PPC_SETTINGS_timur_a_image);
+const auto kAllPerfTasks = ppc::util::MakeAllPerfTasks<InType, TimurAImageMPI, TimurAImageSEQ>(
+    PPC_SETTINGS_timur_a_image);
 
 const auto kGtestValues = ppc::util::TupleToGTestValues(kAllPerfTasks);
 
-const auto kPerfTestName = ExampleRunPerfTestProcesses2::CustomPerfTestName;
+const auto kPerfTestName = TimurAImagePerfTest::CustomPerfTestName;
 
-INSTANTIATE_TEST_SUITE_P(RunModeTests, ExampleRunPerfTestProcesses2, kGtestValues, kPerfTestName);
+INSTANTIATE_TEST_SUITE_P(RunModeTests, TimurAImagePerfTest, kGtestValues, kPerfTestName);
 
 }  // namespace timur_a_image
