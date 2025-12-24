@@ -53,5 +53,6 @@ const auto kGtestValues = ppc::util::TupleToGTestValues(kAllPerfTasks);
 const auto kPerfTestName = TimurAImagePerfTest::CustomPerfTestName;
 
 INSTANTIATE_TEST_SUITE_P(RunModeTests, TimurAImagePerfTest, kGtestValues, kPerfTestName);
+ 
 
 }  // namespace timur_a_image
