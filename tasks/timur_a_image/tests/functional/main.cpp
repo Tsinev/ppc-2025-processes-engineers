@@ -21,6 +21,7 @@ class TimurAFuncTests : public ppc::util::BaseRunFuncTests<InType, OutType, Test
   static std::string PrintTestParam(const TestType &test_param) {
     return std::to_string(std::get<0>(test_param)) + "_" + std::get<1>(test_param);
   }
+  
 
  protected:
   void SetUp() override {
