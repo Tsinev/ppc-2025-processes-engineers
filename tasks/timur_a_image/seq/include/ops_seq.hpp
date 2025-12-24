@@ -19,4 +19,5 @@ class TimurAImageSEQ : public BaseTask {
   bool PostProcessingImpl() override;
 };
 
+
 }  // namespace timur_a_image
