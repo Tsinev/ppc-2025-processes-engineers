@@ -1,4 +1,7 @@
 #include <gtest/gtest.h>
+#include <mpi.h>
+
+#include <cmath>
 
 #include "timur_a_integral/common/include/common.hpp"
 #include "timur_a_integral/mpi/include/ops_mpi.hpp"
@@ -8,33 +11,43 @@
 namespace timur_a_integral {
 
 class TimurAIntegralPerfTest : public ppc::util::BaseRunPerfTests<InType, OutType> {
-  const int kCount_ = 100;
-  InType input_data_{};
-
+ protected:
   void SetUp() override {
-    input_data_ = kCount_;
+    input_data_ = TaskData{.n_steps = 2000, .func_id = 1, .x1 = 0.0, .x2 = 1.0, .y1 = 0.0, .y2 = 1.0};
   }
 
   bool CheckTestOutputData(OutType &output_data) final {
-    return input_data_ == output_data;
+    int rank = 0;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+    if (rank != 0) {
+      return true;
+    }
+
+    double expected = 2.0 / 3.0;
+    double tolerance = 1e-3;
+    return std::abs(output_data - expected) < tolerance;
   }
 
   InType GetTestInputData() final {
     return input_data_;
   }
+
+ private:
+  InType input_data_{};
 };
 
-TEST_P(TimurAIntegralPerfTest, RunPerfModes) {
+TEST_P(TimurAIntegralPerfTest, PerformanceTests) {
   ExecuteTest(GetParam());
 }
 
 const auto kAllPerfTasks =
-    ppc::util::MakeAllPerfTasks<InType, TimurAIntegralMPI, TimurAIntegralSEQ>(PPC_SETTINGS_timur_a_integral);
+    ppc::util::MakeAllPerfTasks<InType, TimurAIntegralMPI, TimurAIntegralSEQ>(
+        PPC_SETTINGS_timur_a_integral);
 
 const auto kGtestValues = ppc::util::TupleToGTestValues(kAllPerfTasks);
-
 const auto kPerfTestName = TimurAIntegralPerfTest::CustomPerfTestName;
 
-INSTANTIATE_TEST_SUITE_P(RunModeTests, TimurAIntegralPerfTest, kGtestValues, kPerfTestName);
+INSTANTIATE_TEST_SUITE_P(TimurAPerformanceTestSuite, TimurAIntegralPerfTest, kGtestValues, kPerfTestName);
 
 }  // namespace timur_a_integral
