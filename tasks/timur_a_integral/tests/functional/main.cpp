@@ -20,7 +20,7 @@
 
 namespace timur_a_integral {
 
-class NesterovARunFuncTestsProcesses3 : public ppc::util::BaseRunFuncTests<InType, OutType, TestType> {
+class TimurAFuncTests : public ppc::util::BaseRunFuncTests<InType, OutType, TestType> {
  public:
   static std::string PrintTestParam(const TestType &test_param) {
     return std::to_string(std::get<0>(test_param)) + "_" + std::get<1>(test_param);
@@ -65,7 +65,7 @@ class NesterovARunFuncTestsProcesses3 : public ppc::util::BaseRunFuncTests<InTyp
 
 namespace {
 
-TEST_P(NesterovARunFuncTestsProcesses3, MatmulFromPic) {
+TEST_P(TimurAFuncTests, MatmulFromPic) {
   ExecuteTest(GetParam());
 }
 
@@ -77,9 +77,9 @@ const auto kTestTasksList =
 
 const auto kGtestValues = ppc::util::ExpandToValues(kTestTasksList);
 
-const auto kPerfTestName = NesterovARunFuncTestsProcesses3::PrintFuncTestName<NesterovARunFuncTestsProcesses3>;
+const auto kPerfTestName = TimurAFuncTests::PrintFuncTestName<TimurAFuncTests>;
 
-INSTANTIATE_TEST_SUITE_P(PicMatrixTests, NesterovARunFuncTestsProcesses3, kGtestValues, kPerfTestName);
+INSTANTIATE_TEST_SUITE_P(PicMatrixTests, TimurAFuncTests, kGtestValues, kPerfTestName);
 
 }  // namespace
 
