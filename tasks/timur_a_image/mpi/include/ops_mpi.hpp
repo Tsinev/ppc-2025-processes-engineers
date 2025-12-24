@@ -1,7 +1,7 @@
 #pragma once
 
-#include "timur_a_image/common/include/common.hpp"
 #include "task/include/task.hpp"
+#include "timur_a_image/common/include/common.hpp"
 
 namespace timur_a_image {
 
@@ -11,7 +11,7 @@ class TimurAImageMPI : public BaseTask {
   static constexpr ppc::task::TypeOfTask GetStaticTypeOfTask() {
     return ppc::task::TypeOfTask::kMPI;
   }
-  
+
   // Constructor that initializes the task with input data
   explicit TimurAImageMPI(const InType &in);
 

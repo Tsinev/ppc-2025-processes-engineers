@@ -10,7 +10,6 @@
 
 #include "timur_a_image/common/include/common.hpp"
 
-
 namespace timur_a_image {
 
 TimurAImageMPI::TimurAImageMPI(const InType &in) {
@@ -18,10 +17,10 @@ TimurAImageMPI::TimurAImageMPI(const InType &in) {
   GetInput() = in;
 }
 
-bool TimurAImageMPI::ValidationImpl()  {
+bool TimurAImageMPI::ValidationImpl() {
   int rank = 0;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-  
+
   std::array<int, 4> params = {0, 0, 0, 0};
 
   if (rank == 0) {
@@ -52,7 +51,7 @@ bool TimurAImageMPI::ValidationImpl()  {
 bool TimurAImageMPI::PreProcessingImpl() {
   int rank = 0;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-  
+
   if (rank == 0) {
     GetOutput().width = GetInput().width;
     GetOutput().height = GetInput().height;
@@ -63,7 +62,7 @@ bool TimurAImageMPI::PreProcessingImpl() {
     GetOutput().height = GetInput().height;
     GetOutput().kernel_size = GetInput().kernel_size;
   }
-  
+
   return true;
 }
 
@@ -177,7 +176,7 @@ void PrepareGatherParameters(int rank, int size, int width, int height, std::vec
     }
   }
 }
-} // namespace
+}  // namespace
 
 bool TimurAImageMPI::RunImpl() {
   int rank = 0;
@@ -226,10 +225,8 @@ bool TimurAImageMPI::RunImpl() {
   PrepareGatherParameters(rank, size, width, height, sendcounts, displs);
 
   MPI_Gatherv(local_result.data(), local_rows * width, MPI_UNSIGNED_CHAR,
-              (rank == 0 ? GetOutput().data.data() : nullptr), 
-              (rank == 0 ? sendcounts.data() : nullptr), 
-              (rank == 0 ? displs.data() : nullptr), 
-              MPI_UNSIGNED_CHAR, 0, MPI_COMM_WORLD);
+              (rank == 0 ? GetOutput().data.data() : nullptr), (rank == 0 ? sendcounts.data() : nullptr),
+              (rank == 0 ? displs.data() : nullptr), MPI_UNSIGNED_CHAR, 0, MPI_COMM_WORLD);
 
   return true;
 }

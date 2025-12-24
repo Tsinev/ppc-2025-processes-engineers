@@ -39,4 +39,4 @@ inline int Clamp(int val, int min_val, int max_val) {
   return val;
 }
 
-} // namespace timur_a_image
+}  // namespace timur_a_image

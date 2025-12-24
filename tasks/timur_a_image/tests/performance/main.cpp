@@ -45,8 +45,8 @@ TEST_P(TimurAImagePerfTest, RunPerfModes) {
   ExecuteTest(GetParam());
 }
 
-const auto kAllPerfTasks = ppc::util::MakeAllPerfTasks<InType, TimurAImageMPI, TimurAImageSEQ>(
-    PPC_SETTINGS_timur_a_image);
+const auto kAllPerfTasks =
+    ppc::util::MakeAllPerfTasks<InType, TimurAImageMPI, TimurAImageSEQ>(PPC_SETTINGS_timur_a_image);
 
 const auto kGtestValues = ppc::util::TupleToGTestValues(kAllPerfTasks);
 
