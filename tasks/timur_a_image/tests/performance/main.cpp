@@ -45,14 +45,13 @@ TEST_P(TimurAImagePerfTest, RunPerfModes) {
   ExecuteTest(GetParam());
 }
 
-const auto kAllPerfTasks = ppc::util::MakeAllPerfTasks<InType, TimurAImageMPI, TimurAImageSEQ>(
-    PPC_SETTINGS_timur_a_image);
+const auto kAllPerfTasks =
+    ppc::util::MakeAllPerfTasks<InType, TimurAImageMPI, TimurAImageSEQ>(PPC_SETTINGS_timur_a_image);
 
 const auto kGtestValues = ppc::util::TupleToGTestValues(kAllPerfTasks);
 
 const auto kPerfTestName = TimurAImagePerfTest::CustomPerfTestName;
 
 INSTANTIATE_TEST_SUITE_P(RunModeTests, TimurAImagePerfTest, kGtestValues, kPerfTestName);
- 
 
 }  // namespace timur_a_image

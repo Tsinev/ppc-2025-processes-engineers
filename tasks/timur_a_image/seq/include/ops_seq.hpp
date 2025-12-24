@@ -1,7 +1,7 @@
 #pragma once
 
-#include "timur_a_image/common/include/common.hpp"
 #include "task/include/task.hpp"
+#include "timur_a_image/common/include/common.hpp"
 
 namespace timur_a_image {
 
@@ -18,6 +18,5 @@ class TimurAImageSEQ : public BaseTask {
   bool RunImpl() override;
   bool PostProcessingImpl() override;
 };
-
 
 }  // namespace timur_a_image

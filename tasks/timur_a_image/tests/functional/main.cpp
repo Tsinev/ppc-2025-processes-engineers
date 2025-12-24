@@ -21,7 +21,6 @@ class TimurAFuncTests : public ppc::util::BaseRunFuncTests<InType, OutType, Test
   static std::string PrintTestParam(const TestType &test_param) {
     return std::to_string(std::get<0>(test_param)) + "_" + std::get<1>(test_param);
   }
-  
 
  protected:
   void SetUp() override {
@@ -117,9 +116,9 @@ const std::array<TestType, 6> kTestParam = {std::make_tuple(3, "kernel3"),
                                             std::make_tuple(3, "mpi_coverage_zero_rows"),
                                             std::make_tuple(1, "kernel1")};
 
-const auto kTestTasksList = std::tuple_cat(
-    ppc::util::AddFuncTask<TimurAImageMPI, InType>(kTestParam, PPC_SETTINGS_timur_a_image),
-    ppc::util::AddFuncTask<TimurAImageSEQ, InType>(kTestParam, PPC_SETTINGS_timur_a_image));
+const auto kTestTasksList =
+    std::tuple_cat(ppc::util::AddFuncTask<TimurAImageMPI, InType>(kTestParam, PPC_SETTINGS_timur_a_image),
+                   ppc::util::AddFuncTask<TimurAImageSEQ, InType>(kTestParam, PPC_SETTINGS_timur_a_image));
 
 const auto kGtestValues = ppc::util::ExpandToValues(kTestTasksList);
 
