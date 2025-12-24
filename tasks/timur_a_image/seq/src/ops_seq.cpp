@@ -69,7 +69,7 @@ void ProcessBorderPixelSeq(int row, int col, int width, int height, int kernel_r
 
 bool TimurAImageSEQ::RunImpl() {
   const auto &in = GetInput();
-  auto &out = GetOutput();
+  auto   &out = GetOutput();
 
   const int width = in.width;
   const int height = in.height;
