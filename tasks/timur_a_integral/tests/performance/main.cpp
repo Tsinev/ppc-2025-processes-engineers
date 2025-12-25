@@ -47,6 +47,6 @@ const auto kAllPerfTasks =
 const auto kGtestValues = ppc::util::TupleToGTestValues(kAllPerfTasks);
 const auto kPerfTestName = TimurAIntegralPerfTest::CustomPerfTestName;
 
-INSTANTIATE_TEST_SUITE_P(TimurAPerformanceTestSuite, TimurAIntegralPerfTest, kGtestValues, kPerfTestName);
+INSTANTIATE_TEST_SUITE_P(TimurAIntegralPerfTestSuite, TimurAIntegralPerfTest, kGtestValues, kPerfTestName);
 
 }  // namespace timur_a_integral
