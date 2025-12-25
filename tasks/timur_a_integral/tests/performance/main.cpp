@@ -42,8 +42,7 @@ TEST_P(TimurAIntegralPerfTest, PerformanceTests) {
 }
 
 const auto kAllPerfTasks =
-    ppc::util::MakeAllPerfTasks<InType, TimurAIntegralMPI, TimurAIntegralSEQ>(
-        PPC_SETTINGS_timur_a_integral);
+    ppc::util::MakeAllPerfTasks<InType, TimurAIntegralMPI, TimurAIntegralSEQ>(PPC_SETTINGS_timur_a_integral);
 
 const auto kGtestValues = ppc::util::TupleToGTestValues(kAllPerfTasks);
 const auto kPerfTestName = TimurAIntegralPerfTest::CustomPerfTestName;

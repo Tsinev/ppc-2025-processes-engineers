@@ -111,15 +111,13 @@ const std::array<TestType, 17> kTestParam = {
                     "sin_cos_small"),
 };
 
-const auto kTestTasksList = std::tuple_cat(ppc::util::AddFuncTask<TimurAIntegralMPI, InType>(
-                                               kTestParam, PPC_SETTINGS_timur_a_integral),
-                                           ppc::util::AddFuncTask<TimurAIntegralSEQ, InType>(
-                                               kTestParam, PPC_SETTINGS_timur_a_integral));
+const auto kTestTasksList =
+    std::tuple_cat(ppc::util::AddFuncTask<TimurAIntegralMPI, InType>(kTestParam, PPC_SETTINGS_timur_a_integral),
+                   ppc::util::AddFuncTask<TimurAIntegralSEQ, InType>(kTestParam, PPC_SETTINGS_timur_a_integral));
 
 const auto kGtestValues = ppc::util::ExpandToValues(kTestTasksList);
 
-const auto kPerfTestName =
-    TimurAFuncTests::PrintFuncTestName<TimurAFuncTests>;
+const auto kPerfTestName = TimurAFuncTests::PrintFuncTestName<TimurAFuncTests>;
 
 INSTANTIATE_TEST_SUITE_P(IntegrationTests, TimurAFuncTests, kGtestValues, kPerfTestName);
 

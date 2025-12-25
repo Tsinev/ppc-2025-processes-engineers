@@ -1,7 +1,7 @@
 #pragma once
 
-#include "timur_a_integral/common/include/common.hpp"
 #include "task/include/task.hpp"
+#include "timur_a_integral/common/include/common.hpp"
 
 namespace timur_a_integral {
 
