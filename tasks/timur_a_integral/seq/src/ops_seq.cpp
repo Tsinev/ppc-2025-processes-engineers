@@ -28,30 +28,17 @@ bool TimurAIntegralSEQ::RunImpl() {
 
   double sum = 0.0;
 
-  for (int i = 1; i < data.n_steps; i++) {
+  for (int i = 0; i <= data.n_steps; i++) {
     double x = data.x1 + (i * hx);
-    for (int j = 1; j < data.n_steps; j++) {
+    double weight_x = (i == 0 || i == data.n_steps) ? 0.5 : 1.0;
+    
+    for (int j = 0; j <= data.n_steps; j++) {
       double y = data.y1 + (j * hy);
-      sum += f(x, y);
+      double weight_y = (j == 0 || j == data.n_steps) ? 0.5 : 1.0;
+      
+      sum += f(x, y) * weight_x * weight_y;
     }
   }
-
-  for (int i = 1; i < data.n_steps; i++) {
-    double x = data.x1 + (i * hx);
-    sum += 0.5 * f(x, data.y1);
-    sum += 0.5 * f(x, data.y2);
-  }
-
-  for (int j = 1; j < data.n_steps; j++) {
-    double y = data.y1 + (j * hy);
-    sum += 0.5 * f(data.x1, y);
-    sum += 0.5 * f(data.x2, y);
-  }
-
-  sum += 0.25 * f(data.x1, data.y1);
-  sum += 0.25 * f(data.x2, data.y1);
-  sum += 0.25 * f(data.x1, data.y2);
-  sum += 0.25 * f(data.x2, data.y2);
 
   GetOutput() = sum * hx * hy;
 

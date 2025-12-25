@@ -60,7 +60,7 @@ inline double GetExactIntegral(const TaskData &data) {
     case 3: {
       return (std::exp(data.x2) - std::exp(data.x1)) * (std::exp(data.y2) - std::exp(data.y1));
     }
-    case 5: {
+    case 4: {
       return (data.x2 - data.x1) * (data.y2 - data.y1);
     }
     default:
