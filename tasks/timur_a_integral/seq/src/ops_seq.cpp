@@ -21,7 +21,7 @@ bool TimurAIntegralSEQ::PreProcessingImpl() {
 }
 
 bool TimurAIntegralSEQ::RunImpl() {
- auto data = GetInput();
+  auto data = GetInput();
   auto f = GetFunction(data.func_id);
   double hx = (data.x2 - data.x1) / data.n_steps;
   double hy = (data.y2 - data.y1) / data.n_steps;
@@ -61,6 +61,5 @@ bool TimurAIntegralSEQ::RunImpl() {
 bool TimurAIntegralSEQ::PostProcessingImpl() {
   return true;
 }
-
 
 }  // namespace timur_a_integral

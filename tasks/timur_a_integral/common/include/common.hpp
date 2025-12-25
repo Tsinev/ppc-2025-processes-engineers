@@ -20,7 +20,7 @@ struct TaskData {
            std::abs(x2 - other.x2) < 1e-9 && std::abs(y1 - other.y1) < 1e-9 && std::abs(y2 - other.y2) < 1e-9;
   }
 };
-
+//
 using InType = TaskData;
 using OutType = double;
 using TestType = std::tuple<TaskData, std::string>;
