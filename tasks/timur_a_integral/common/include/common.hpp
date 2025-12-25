@@ -47,6 +47,7 @@ inline std::function<double(double, double)> GetFunction(int id) {
   }
 }
 
+
 inline double GetExactIntegral(const TaskData &data) {
   switch (data.func_id) {
     case 0:
