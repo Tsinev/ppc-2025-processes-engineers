@@ -10,7 +10,7 @@ TimurAIntegralSEQ::TimurAIntegralSEQ(const InType &in) {
   SetTypeOfTask(GetStaticTypeOfTask());
   GetInput() = in;
 }
-
+//
 bool TimurAIntegralSEQ::ValidationImpl() {
   return GetInput().n_steps > 0 && GetInput().x2 > GetInput().x1 && GetInput().y2 > GetInput().y1;
 }

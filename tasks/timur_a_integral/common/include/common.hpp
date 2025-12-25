@@ -26,7 +26,6 @@ using OutType = double;
 using TestType = std::tuple<TaskData, std::string>;
 using BaseTask = ppc::task::Task<InType, OutType>;
 
-
 inline std::function<double(double, double)> GetFunction(int id) {
   switch (id) {
     case 0:
