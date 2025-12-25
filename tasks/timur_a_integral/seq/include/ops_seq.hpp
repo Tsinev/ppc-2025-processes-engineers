@@ -10,7 +10,7 @@ class TimurAIntegralSEQ : public BaseTask {
   static constexpr ppc::task::TypeOfTask GetStaticTypeOfTask() {
     return ppc::task::TypeOfTask::kSEQ;
   }
-  explicit GaseninLMultIntMstepTrapezSEQ(const InType &in);
+  explicit TimurAIntegralSEQ(const InType &in);
 
  private:
   bool ValidationImpl() override;
