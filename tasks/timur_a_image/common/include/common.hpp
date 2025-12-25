@@ -14,7 +14,6 @@ struct TaskData {
   int width = 0;
   int height = 0;
   int kernel_size = 0;
-
   bool operator==(const TaskData &other) const {
     return data == other.data && width == other.width && height == other.height && kernel_size == other.kernel_size;
   }
