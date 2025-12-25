@@ -64,7 +64,7 @@ inline double GetExactIntegral(const TaskData &data) {
       return (data.x2 - data.x1) * (data.y2 - data.y1);
     }
     case 5: {
-      // Константная функция возвращает 1.0, поэтому интеграл = площадь
+      //
       return (data.x2 - data.x1) * (data.y2 - data.y1);
     }
     default:
