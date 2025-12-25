@@ -14,7 +14,7 @@ TimurAIntegralMPI::TimurAIntegralMPI(const InType &in) {
   GetInput() = in;
 }
 
-bool TimurAIntegralMPI::ValidationImpl()  {
+bool TimurAIntegralMPI::ValidationImpl() {
   return GetInput().n_steps > 0 && GetInput().x2 > GetInput().x1 && GetInput().y2 > GetInput().y1;
 }
 
