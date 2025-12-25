@@ -120,4 +120,5 @@ const auto kGtestValues = ppc::util::ExpandToValues(kTestTasksList);
 const auto kPerfTestName = TimurAFuncTests::PrintFuncTestName<TimurAFuncTests>;
 
 INSTANTIATE_TEST_SUITE_P(IntegrationTests, TimurAFuncTests, kGtestValues, kPerfTestName);
+}  // namespace
 }  // namespace timur_a_integral
