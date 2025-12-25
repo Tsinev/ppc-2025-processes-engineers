@@ -12,7 +12,7 @@ class TimurAIntegralMPI : public BaseTask {
   }
   explicit TimurAIntegralMPI(const InType &in);
 
- private:
+  private:
   bool ValidationImpl() override;
   bool PreProcessingImpl() override;
   bool RunImpl() override;

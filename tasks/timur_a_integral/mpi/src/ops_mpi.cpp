@@ -14,12 +14,12 @@ TimurAIntegralMPI::TimurAIntegralMPI(const InType &in) {
   GetInput() = in;
 }
 
-bool TimurAIntegralMPI::ValidationImpl() {
+bool TimurAIntegralMPI::ValidationImpl()  {
   return GetInput().n_steps > 0 && GetInput().x2 > GetInput().x1 && GetInput().y2 > GetInput().y1;
 }
 
 bool TimurAIntegralMPI::PreProcessingImpl() {
- GetOutput() = 0.0;
+  GetOutput() = 0.0;
   return true;
 }
 
@@ -56,7 +56,7 @@ double RunKernel(const TaskData &data, int rank, int size, const Func &f) {
 }  // namespace
 
 bool TimurAIntegralMPI::RunImpl() {
-   int rank = 0;
+  int rank = 0;
   int size = 0;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
@@ -109,7 +109,6 @@ bool TimurAIntegralMPI::RunImpl() {
 
   return true;
 }
-
 bool TimurAIntegralMPI::PostProcessingImpl() {
   return true;
 }
