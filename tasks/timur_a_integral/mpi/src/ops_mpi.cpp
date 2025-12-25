@@ -26,50 +26,38 @@ bool TimurAIntegralMPI::PreProcessingImpl() {
 namespace {
 
 template <typename Func>
-double ComputeTrapezoidal2D(const TaskData &data, int rank, int size, const Func &f) {
-  double n_steps = static_cast<double>(data.n_steps);
-  double hx = (data.x2 - data.x1) / n_steps;
-  double hy = (data.y2 - data.y1) / n_steps;
+double ComputeIntegralSEQStyle(const TaskData &data, int rank, int size, const Func &f) {
+  double hx = (data.x2 - data.x1) / data.n_steps;
+  double hy = (data.y2 - data.y1) / data.n_steps;
 
-  int total_points_x = data.n_steps + 1;
+  int total_inner_i = data.n_steps - 1;
 
-  int points_per_proc = total_points_x / size;
-  int remainder = total_points_x % size;
+  int points_per_proc = total_inner_i / size;
+  int remainder = total_inner_i % size;
 
   int start_i = rank * points_per_proc + std::min(rank, remainder);
   int end_i = start_i + points_per_proc + (rank < remainder ? 1 : 0);
 
-  if (start_i >= end_i) {
-    return 0.0;
-  }
+  start_i += 1;
+  end_i += 1;
 
   double local_sum = 0.0;
 
   for (int i = start_i; i < end_i; ++i) {
     double x = data.x1 + i * hx;
-
-    double weight_x;
-    if (i == 0 || i == data.n_steps) {
-      weight_x = 0.5;
-    } else {
-      weight_x = 1.0;
-    }
-
-    for (int j = 0; j <= data.n_steps; ++j) {
+    for (int j = 1; j < data.n_steps; ++j) {
       double y = data.y1 + j * hy;
-
-      double weight_y;
-      if (j == 0 || j == data.n_steps) {
-        weight_y = 0.5;
-      } else {
-        weight_y = 1.0;
-      }
-
-      local_sum += f(x, y) * weight_x * weight_y;
+      local_sum += f(x, y);
     }
   }
 
-  return local_sum * hx * hy;
+  for (int i = start_i; i < end_i; ++i) {
+    double x = data.x1 + i * hx;
+    local_sum += 0.5 * f(x, data.y1);
+    local_sum += 0.5 * f(x, data.y2);
+  }
+
+  return local_sum;
 }
 }  // namespace
 
@@ -91,54 +79,40 @@ bool TimurAIntegralMPI::RunImpl() {
     MPI_Bcast(&data.y1, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     MPI_Bcast(&data.y2, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-    double local_result = 0.0;
+    auto f = GetFunction(data.func_id);
 
-    switch (data.func_id) {
-      case 0:
-        local_result = ComputeTrapezoidal2D(data, rank, size, [](double x, double y) { return x + y; });
-        break;
+    double local_sum = 0.0;
 
-      case 1:
-        local_result = ComputeTrapezoidal2D(data, rank, size, [](double x, double y) { return x * x + y * y; });
-        break;
+    local_sum = ComputeIntegralSEQStyle(data, rank, size, f);
 
-      case 2:
-        local_result =
-            ComputeTrapezoidal2D(data, rank, size, [](double x, double y) { return std::sin(x) * std::cos(y); });
-        break;
+    double total_sum = 0.0;
+    MPI_Reduce(&local_sum, &total_sum, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
-      case 3:
-        local_result = ComputeTrapezoidal2D(data, rank, size, [](double x, double y) { return std::exp(x + y); });
-        break;
+    double result = 0.0;
+    if (rank == 0) {
+      double hx = (data.x2 - data.x1) / data.n_steps;
+      double hy = (data.y2 - data.y1) / data.n_steps;
 
-      case 4:
-        local_result =
-            ComputeTrapezoidal2D(data, rank, size, [](double x, double y) { return std::sqrt(x * x + y * y); });
-        break;
+      for (int j = 1; j < data.n_steps; ++j) {
+        double y = data.y1 + j * hy;
+        total_sum += 0.5 * f(data.x1, y);
+        total_sum += 0.5 * f(data.x2, y);
+      }
 
-      case 5:
-        local_result = ComputeTrapezoidal2D(data, rank, size, [](double x, double y) {
-          (void)x;
-          (void)y;
-          return 1.0;
-        });
-        break;
+      total_sum += 0.25 * f(data.x1, data.y1);
+      total_sum += 0.25 * f(data.x2, data.y1);
+      total_sum += 0.25 * f(data.x1, data.y2);
+      total_sum += 0.25 * f(data.x2, data.y2);
 
-      default:
-        local_result = ComputeTrapezoidal2D(data, rank, size, [](double x, double y) {
-          (void)x;
-          (void)y;
-          return 1.0;
-        });
-        break;
+      result = total_sum * hx * hy;
+      GetOutput() = result;
     }
 
-    double global_result = 0.0;
-    MPI_Reduce(&local_result, &global_result, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&result, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-    MPI_Bcast(&global_result, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-
-    GetOutput() = global_result;
+    if (rank != 0) {
+      GetOutput() = result;
+    }
 
     return true;
 
