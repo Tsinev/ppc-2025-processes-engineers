@@ -27,25 +27,28 @@ bool TimurAIntegralMPI::PreProcessingImpl() {
 namespace {
 template <typename Func>
 double RunKernel(const TaskData &data, int rank, int size, const Func &f) {
-  double hx = (data.x2 - data.x1) / data.n_steps;
-  double hy = (data.y2 - data.y1) / data.n_steps;
+  double n_steps_d = static_cast<double>(data.n_steps);
+  double hx = (data.x2 - data.x1) / n_steps_d;
+  double hy = (data.y2 - data.y1) / n_steps_d;
 
-  int total_nodes_x = data.n_steps + 1;
+  int total_points_x = data.n_steps + 1;
 
-  int count = total_nodes_x / size;
-  int remainder = total_nodes_x % size;
+  int points_per_proc = total_points_x / size;
+  int remainder = total_points_x % size;
 
-  int start_i = (rank * count) + std::min(rank, remainder);
-  int end_i = start_i + count + (rank < remainder ? 1 : 0);
+  int start_i = rank * points_per_proc + std::min(rank, remainder);
+  int end_i = start_i + points_per_proc + (rank < remainder ? 1 : 0);
 
   double local_sum = 0.0;
 
   for (int i = start_i; i < end_i; ++i) {
-    double x = data.x1 + (i * hx);
+    double x = data.x1 + i * hx;
+
     double weight_x = (i == 0 || i == data.n_steps) ? 0.5 : 1.0;
 
     for (int j = 0; j <= data.n_steps; ++j) {
-      double y = data.y1 + (j * hy);
+      double y = data.y1 + j * hy;
+
       double weight_y = (j == 0 || j == data.n_steps) ? 0.5 : 1.0;
 
       local_sum += f(x, y) * weight_x * weight_y;
@@ -61,6 +64,8 @@ bool TimurAIntegralMPI::RunImpl() {
   int size = 0;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
+
+  MPI_Barrier(MPI_COMM_WORLD);
 
   TaskData data{};
   if (rank == 0) {
@@ -81,7 +86,7 @@ bool TimurAIntegralMPI::RunImpl() {
       local_result = RunKernel(data, rank, size, [](double x, double y) { return x + y; });
       break;
     case 1:
-      local_result = RunKernel(data, rank, size, [](double x, double y) { return (x * x) + (y * y); });
+      local_result = RunKernel(data, rank, size, [](double x, double y) { return x * x + y * y; });
       break;
     case 2:
       local_result = RunKernel(data, rank, size, [](double x, double y) { return std::sin(x) * std::cos(y); });
@@ -90,7 +95,14 @@ bool TimurAIntegralMPI::RunImpl() {
       local_result = RunKernel(data, rank, size, [](double x, double y) { return std::exp(x + y); });
       break;
     case 4:
-      local_result = RunKernel(data, rank, size, [](double x, double y) { return std::sqrt((x * x) + (y * y)); });
+      local_result = RunKernel(data, rank, size, [](double x, double y) { return std::sqrt(x * x + y * y); });
+      break;
+    case 5:
+      local_result = RunKernel(data, rank, size, [](double x, double y) {
+        (void)x;
+        (void)y;
+        return 1.0;
+      });
       break;
     default:
       local_result = RunKernel(data, rank, size, [](double x, double y) {
@@ -108,10 +120,13 @@ bool TimurAIntegralMPI::RunImpl() {
 
   GetOutput() = global_result;
 
+  MPI_Barrier(MPI_COMM_WORLD);
+
   return true;
 }
 
 bool TimurAIntegralMPI::PostProcessingImpl() {
+  std::cout << std::setprecision(15) << GetOutput() << std::endl;
   return true;
 }
 
