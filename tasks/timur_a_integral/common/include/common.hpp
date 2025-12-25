@@ -66,5 +66,5 @@ inline double GetExactIntegral(const TaskData &data) {
     default:
       return 0.0;
   }
-}  //
+}
 }  // namespace timur_a_integral

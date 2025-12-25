@@ -38,10 +38,6 @@ double RunKernel(const TaskData &data, int rank, int size, const Func &f) {
   int start_i = (rank * count) + std::min(rank, remainder);
   int end_i = start_i + count + (rank < remainder ? 1 : 0);
 
-  if (start_i >= end_i) {
-    return 0.0;
-  }
-
   double local_sum = 0.0;
 
   for (int i = start_i; i < end_i; ++i) {
@@ -96,16 +92,7 @@ bool TimurAIntegralMPI::RunImpl() {
     case 4:
       local_result = RunKernel(data, rank, size, [](double x, double y) { return std::sqrt((x * x) + (y * y)); });
       break;
-    case 5:
-
-      local_result = RunKernel(data, rank, size, [](double x, double y) {
-        (void)x;
-        (void)y;
-        return 1.0;
-      });
-      break;
     default:
-
       local_result = RunKernel(data, rank, size, [](double x, double y) {
         (void)x;
         (void)y;
@@ -117,21 +104,14 @@ bool TimurAIntegralMPI::RunImpl() {
   double global_result = 0.0;
   MPI_Reduce(&local_result, &global_result, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
 
-  if (rank == 0) {
-    GetOutput() = global_result;
-  }
-
   MPI_Bcast(&global_result, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-  if (rank != 0) {
-    GetOutput() = global_result;
-  }
+  GetOutput() = global_result;
 
   return true;
 }
 
 bool TimurAIntegralMPI::PostProcessingImpl() {
-  std::cout << std::setprecision(15) << "Result: " << GetOutput() << std::endl;
   return true;
 }
 
