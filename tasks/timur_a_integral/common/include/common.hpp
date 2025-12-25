@@ -20,7 +20,7 @@ struct TaskData {
            std::abs(x2 - other.x2) < 1e-9 && std::abs(y1 - other.y1) < 1e-9 && std::abs(y2 - other.y2) < 1e-9;
   }
 };
-//
+
 using InType = TaskData;
 using OutType = double;
 using TestType = std::tuple<TaskData, std::string>;
@@ -60,16 +60,11 @@ inline double GetExactIntegral(const TaskData &data) {
     case 3: {
       return (std::exp(data.x2) - std::exp(data.x1)) * (std::exp(data.y2) - std::exp(data.y1));
     }
-    case 4: {
-      return (data.x2 - data.x1) * (data.y2 - data.y1);
-    }
     case 5: {
-      //
       return (data.x2 - data.x1) * (data.y2 - data.y1);
     }
     default:
       return 0.0;
   }
 }
-//
 }  // namespace timur_a_integral
