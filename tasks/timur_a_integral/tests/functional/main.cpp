@@ -15,7 +15,7 @@
 
 namespace timur_a_integral {
 
-class TimurAFuncTests : public ppc::util::BaseRunFuncTests<InType, OutType, TestType> {
+class TimurAFuncTestsIntegral : public ppc::util::BaseRunFuncTests<InType, OutType, TestType> {
  public:
   static std::string PrintTestParam(const TestType &test_param) {
     const auto &data = std::get<0>(test_param);
@@ -49,7 +49,7 @@ class TimurAFuncTests : public ppc::util::BaseRunFuncTests<InType, OutType, Test
 
 namespace {
 
-TEST_P(TimurAFuncTests, IntegrationTest) {
+TEST_P(TimurAFuncTestsIntegral, IntegrationTest) {
   ExecuteTest(GetParam());
 }
 
@@ -117,8 +117,8 @@ const auto kTestTasksList =
 
 const auto kGtestValues = ppc::util::ExpandToValues(kTestTasksList);
 
-const auto kPerfTestName = TimurAFuncTests::PrintFuncTestName<TimurAFuncTests>;
+const auto kPerfTestName = TimurAFuncTestsIntegral::PrintFuncTestName<TimurAFuncTestsIntegral>;
 
-INSTANTIATE_TEST_SUITE_P(IntegrationTests, TimurAFuncTests, kGtestValues, kPerfTestName);
+INSTANTIATE_TEST_SUITE_P(IntegrationTests, TimurAFuncTestsIntegral, kGtestValues, kPerfTestName);
 }  // namespace
 }  // namespace timur_a_integral
